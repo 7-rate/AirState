@@ -1,0 +1,2 @@
+# AirState
+ArduinoとBME280の組み合わせでLCDに気温と湿度を表示する
