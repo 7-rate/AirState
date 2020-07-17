@@ -16,6 +16,8 @@
 #define I2C_ADDRES_COMPASS	0x1E	// HMC5883L
 #define I2C_ADDRES_AIRSTATE	0x76	// BME280
 
+#define TEMP_DRIFT 1.8
+
 enum{TEMP, PRESS, HUM};
 
 /*********************************************************************/
@@ -66,9 +68,9 @@ void setup()
 	writeI2C(I2C_ADDRES_AIRSTATE, 0xF4, 0x27); // Temp,Press over sampling
 	writeI2C(I2C_ADDRES_AIRSTATE, 0xF5, 0xA0); // sampling cycle time 1000ms IIR filterOFF
 	readTrim();   // save calibration data
-	Serial.begin(9600);
 	lcd.begin(16, 2);
 	lcd.setCursor(0, 0);
+    analogWrite(10, 280);
 }
 
 /*********************************************************************/
@@ -85,8 +87,8 @@ void loop()
 	lcd.setCursor(0, 1);
 	lcd.print("Humi :");
 	lcd.print(airStateData[HUM]);
-	
-	delay(1000);
+
+	delay(15000);
 }
 
 
@@ -110,7 +112,7 @@ void getAirState(float airState[])
 	press_act = (float)press_cal / 100.0;
 	hum_act = (float)hum_cal / 1024.0;
 
-	airState[TEMP] = temp_act;
+	airState[TEMP] = temp_act - TEMP_DRIFT;
 	airState[PRESS] = press_act;
 	airState[HUM] = hum_act;
 }
